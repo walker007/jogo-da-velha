@@ -14,6 +14,8 @@ A aplicação é responsiva, funcionando também em dispositivos touch.
 
 O servidor de websocket separa os jogadores em pares conforme vão se conectando, não existindo uma limitação de quantidade de jogadores.
 
+Este Servidor foi desenvolvido usando a extensão ```Swoole``` do PHP, portanto certifique-se de que a extensão esteja devidamente instalada e configurada.
+
 Para iniciar o servidor, execute o comando:
 ```sh
 php server host=127.0.0.1 port=3032
