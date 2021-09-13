@@ -1,0 +1,77 @@
+<?php
+
+use Swoole\Websocket\Server;
+use Swoole\Websocket\Frame;
+
+$argsPrepare = [];
+
+for($i=1;$i< $argc;$i++)
+{
+  $argumento = explode('=',$argv[$i]);
+  $argsPrepare[$argumento[0]] = $argumento[1];
+}
+
+extract($argsPrepare);
+
+
+$servidor = new Server($host,$port);
+
+$servidor->on('message', function (Server $server, Frame $frame) {
+    $conexoes = $server->connections;
+    $origem = $frame->fd;
+    $message = json_decode($frame->data);
+    $pares = [];
+    $contadorPares=0;
+    $currentPar = 0;
+
+    if(count($conexoes)%2==0)
+    {
+      $i = $contadorPares;
+      foreach($conexoes as $conexao)
+      {
+        $pares[$contadorPares][$i] = $conexao;
+        $i++;
+        if($i%2==0)
+        {
+          $contadorPares++;
+        }
+      }
+    }
+
+
+      foreach($pares as $paresKey => $par)
+      {
+        foreach($par as $jogador)
+        {
+          if($jogador == $origem)
+          {
+            $currentPar = $paresKey;
+          }
+        }
+    }
+    
+
+    if(isset($pares[$currentPar]) && count($pares[$currentPar]) == 2)
+    {
+      foreach($pares[$currentPar] as $key => $jogador)
+      {
+        if($message->type == "start")
+            {
+             $server->push($jogador, json_encode(["type" => "start", "playerKey" => $key ,"liberado" => array_key_first($pares[$currentPar]) == $key]));
+            }
+            if($message->type == "jogada")
+            {
+              if($jogador == $origem)
+              {
+                continue;
+              }
+  
+              $server->push($jogador, $frame->data);
+            }
+      }
+    }
+
+    var_dump($pares, $contadorPares, $currentPar);
+});
+
+$servidor->start();

@@ -4,7 +4,7 @@ var tabuleiro = ["a1","a2","a3","b1","b2","b3","c1","c2","c3"],
     vencedor,
     endgame = false,
     liberado = true,
-    host = 'ws://localhost:3032',
+    host = 'ws://10.0.0.200:3032',
     ws;
 
         ws = new WebSocket(host);
@@ -128,7 +128,7 @@ function validaFimJogo()
 
 function getTurno(player)
 {
-    var turnoDiv = document.getElementById('currentPlayer'), direita = document.getElementById('direita');
+    var turnoDiv = document.getElementById('currentPlayer'), direita = document.getElementById('direita-action');
     turnoDiv.innerHTML = players[player];
 
     if(liberado)
